@@ -68,19 +68,22 @@ bool get_fname(const std::string& target_path, const std::string& id, std::strin
 {
 	std::vector< std::string > all_matching_files;
 
-	boost::filesystem::directory_iterator end_itr; // Default ctor yields past-the-end
-	for( boost::filesystem::directory_iterator i( target_path ); i != end_itr; ++i )
+	if( boost::filesystem::is_directory( target_path ) && boost::filesystem::exists( target_path ) )
 	{
-		// Skip if not a file
-		if( !boost::filesystem::is_regular_file( i->status() ) ) 
-			continue;
+		boost::filesystem::directory_iterator end_itr; // Default ctor yields past-the-end
+		for( boost::filesystem::directory_iterator i( target_path ); i != end_itr; ++i )
+		{
+			// Skip if not a file
+			if( !boost::filesystem::is_regular_file( i->status() ) ) 
+				continue;
 
-		// Skip if no match
-		if( i->path().extension().string() != id ) 
-			continue;
+			// Skip if no match
+			if( i->path().extension().string() != id ) 
+				continue;
 
-		// File matches, store it
-		all_matching_files.push_back( i->path().string() );
+			// File matches, store it
+			all_matching_files.push_back( i->path().string() );
+		}
 	}
 
 	size_t len = all_matching_files.size();
